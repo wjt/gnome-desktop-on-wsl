@@ -1,0 +1,23 @@
+#/bin/bash
+set -ex
+set -o pipefail
+
+if [[ "$INSIDE_GENIE" != true ]]; then
+    exec genie --command "$0" "$@"
+fi
+
+gnome-session --systemd --session=gnome-dummy &
+systemctl start --user gnome-remote-desktop
+
+if [[ "$USE_WSLg" = true ]]; then
+    # TODO: check /tmp/.X11-unix
+
+    # --no-x11 to avoid fighting with WSLg over /tmp/.X11-unix
+    # It is a symlink under WSLg, and symlinks cannot have the sticky bit, but Mutter refuses to start Xwayland if it does not have the sticky bit set.
+    LIBGL_ALWAYS_SOFTWARE=1 MUTTER_DEBUG_DUMMY_MODE_SPECS=1920x1080 exec gnome-shell --nested --no-x11
+else
+    # --no-x11 to avoid fighting with WSLg over /tmp/.X11-unix
+    # It is a symlink under WSLg, and symlinks cannot have the sticky bit, but Mutter refuses to start Xwayland if it does not have the sticky bit set.
+    gnome-shell --wayland --headless --virtual-monitor 1920x1080 --no-x11 &
+    mstsc.exe /v:"$(ip -j -4 address show dev eth0 | jq -r '.[0] | .addr_info | .[0].local')"
+fi

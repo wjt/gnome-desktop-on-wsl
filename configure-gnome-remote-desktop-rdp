@@ -1,0 +1,16 @@
+#!/bin/bash
+# https://gitlab.gnome.org/-/snippets/1778
+# but for the credentials we cheat and set GNOME_REMOTE_DESKTOP_TEST_RDP_PASSWORD
+set -ex
+
+# TODO: remove user interaction here
+openssl genrsa -out ~/.config/tls.key 4096
+openssl req -new -key ~/.config/tls.key -out /tmp/tls.csr
+openssl x509 -req -days 730 -signkey ~/.config/tls.key -in /tmp/tls.csr -out ~/.config/tls.crt
+
+gsettings set org.gnome.desktop.remote-desktop.rdp tls-cert ~/.config/tls.crt
+gsettings set org.gnome.desktop.remote-desktop.rdp tls-key  ~/.config/tls.key
+gsettings set org.gnome.desktop.remote-desktop.rdp view-only false
+
+mkdir -p  ~/.config/systemd/user
+rsync gnome-remote-desktop.service.d ~/.config/systemd/user/

@@ -1,0 +1,4 @@
+deb http://deb.debian.org/debian bookworm main
+deb-src http://deb.debian.org/debian bookworm main
+deb http://deb.debian.org/debian-debug/ bookworm-debug main
+deb-src http://deb.debian.org/debian-debug/ bookworm-debug main

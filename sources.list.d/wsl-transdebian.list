@@ -1,0 +1,2 @@
+deb https://arkane-systems.github.io/wsl-transdebian/apt/ bookworm main
+deb-src https://arkane-systems.github.io/wsl-transdebian/apt/ bookworm main
