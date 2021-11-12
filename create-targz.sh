@@ -16,7 +16,7 @@ trap cleanup EXIT
 create_x64_rootfs() {
 	pushd "$TMPDIR"
 
-	sudo cdebootstrap -a "amd64" --exclude=debfoster --include=sudo,locales,wget $DIST $DIST http://deb.debian.org/debian
+	sudo cdebootstrap -a "amd64" --exclude=debfoster --include=sudo,locales $DIST $DIST http://deb.debian.org/debian
 
 	sudo mkdir -p "$CHROOT_BUILDIR"
 	sudo mount --bind "$BUILDIR" "$CHROOT_BUILDIR"
