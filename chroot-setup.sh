@@ -11,12 +11,15 @@ cp $BUILDIR/sources.list /etc/apt/sources.list
 update-locale LANGUAGE=en_US.UTF-8 LC_ALL=C
 echo 'en_US.UTF-8 UTF-8' >> /etc/locale.gen
 locale-gen
+echo -e 'LANG="en_US.UTF-8"\nLANGUAGE="en_US:en"\n' > /etc/default/locale
 
 apt-get update
 # - fuse3: https://bugs.debian.org/cgi-bin/bugreport.cgi?bug=998846
 apt-get install -y --no-install-recommends \
+    accountsservice \
     ca-certificates \
     fuse3 \
+    gnome-control-center \
     gnome-remote-desktop \
     gnome-session \
     gnome-shell \

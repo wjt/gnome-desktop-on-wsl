@@ -25,16 +25,16 @@ EOF
 
 while true; do
     case "$1" in
-        display-size)
+        --display-size)
             shift
             DISPLAY_SIZE="$1"
             shift
             ;;
-        use-wslg)
+        --use-wslg)
             shift
             USE_WSLg=true
             ;;
-        help)
+        --help)
             usage
             exit 0
             ;;
@@ -48,6 +48,13 @@ done
 : ${USE_WSLg:=false}
 : ${DISPLAY_SIZE:=1920x1080}
 
+# Something (perhaps systemd-tmpfiles) overwrites WSLg's symlink with an empty directory.
+# I have tried symlinking /dev/null to /etc/tmpfiles.d/x11.conf but no dice.
+if [[ -d /tmp/.X11-unix && ! -h /tmp/.X11-unix ]]; then
+    sudo rmdir /tmp/.X11-unix
+    ln -s /mnt/wslg/.X11-unix /tmp/.X11-unix
+fi
+
 # Run an empty GNOME session; Shell tries to talk to the session daemon
 gnome-session --systemd --session=gnome-dummy &
 
@@ -60,20 +67,16 @@ GNOME_SHELL_ARGS=(
 )
 
 if [[ "$USE_WSLg" = true ]]; then
-    # Something (perhaps systemd-tmpfiles) overwrites WSLg's symlink with an empty directory.
-    if [[ -d /tmp/.X11-unix && ! -h /tmp/.X11-unix ]]; then
-        sudo rmdir /tmp/.X11-unix
-        ln -s /mnt/wslg/.X11-unix /tmp/.X11-unix
-    fi
-
-    # On my Dell XPS 13 9380, Shell hangs almost immediately when using the D3D12 Mesa driver *AND* running as a client of the WSLg X11 session. Your mileage may vary.
-    LIBGL_ALWAYS_SOFTWARE=1 MUTTER_DEBUG_DUMMY_MODE_SPECS=$DISPLAY_SIZE exec gnome-shell --nested "${GNOME_SHELL_ARGS[@]}"
+    # On my Dell XPS 13 9380, Shell hangs almost immediately when using the D3D12 Mesa driver *AND* running as a client of the WSLg X11 session.
+    # You could try removing LIBGL_ALWAYS_SOFTWARE=1. YMMV.
+    LIBGL_ALWAYS_SOFTWARE=1 MUTTER_DEBUG_DUMMY_MODE_SPECS=$DISPLAY_SIZE gnome-shell --nested "${GNOME_SHELL_ARGS[@]}"
 else
-    # On my Asus E406MA, the D3D12 Mesa driver crashes with SIGILL because the CPU does not support AVX. You may want LIBGL_ALWAYS_SOFTWARE=1 here to work around this.
+    # On my Asus E406MA, the D3D12 Mesa driver crashes with SIGILL because the CPU does not support AVX.
+    # You may want LIBGL_ALWAYS_SOFTWARE=1 here to work around this.
     gnome-shell --wayland --headless --virtual-monitor $DISPLAY_SIZE "${GNOME_SHELL_ARGS[@]}" &
     sleep 5 # Hi Iain
 
-    configure-gnome-remote-desktop-rdp
+    $(dirname "$0")/configure-gnome-remote-desktop-rdp
     systemctl start --user gnome-remote-desktop
     sleep 5 # Hi Tomas
 
