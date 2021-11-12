@@ -1,0 +1,14 @@
+#!/bin/bash
+# https://gitlab.gnome.org/-/snippets/1778
+set -ex
+
+if [[ ! -e ~/.config/tls.key ]]; then
+    openssl req -new -newkey rsa:4096 -days 365 -nodes -x509 \
+        -subj "/C=GB/ST=England/L=London/O=EOSF/CN=example.com" \
+        -keyout ~/.config/tls.key \
+        -out ~/.config/tls.crt
+fi
+
+gsettings set org.gnome.desktop.remote-desktop.rdp tls-cert ~/.config/tls.crt
+gsettings set org.gnome.desktop.remote-desktop.rdp tls-key  ~/.config/tls.key
+gsettings set org.gnome.desktop.remote-desktop.rdp view-only false

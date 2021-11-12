@@ -11,5 +11,10 @@ sudo apt remove pipewire-pulse
 ```
 
 - `systemctl set-default multi-user.target`
-- Mask some units
+- Mask some unitsl
 - Add some overrides
+
+
+## Credits
+
+`create-targz.sh` is a heavily-modified copy of the script from https://salsa.debian.org/debian/WSL, as is the `profile` in this repo. Everything else is original.
