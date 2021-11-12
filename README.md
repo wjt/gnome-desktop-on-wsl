@@ -7,9 +7,13 @@ This contains scripts to set up and launch a **demo** of a full GNOME desktop ru
 
 The headless session works more reliably but is clunkier. Most obviously, you need to sign into the remote desktop session; and we don't get any of the good stuff from WSLg, such as transparently forwarding audio from PulseAudio to the Windows host.
 
-The WSLg approach is neater when it works: you get audio, etc. But one aspect which is quite fragile is correctly setting $WAYLAND_DISPLAY for apps: sometimes they are launched with the WSLg $WAYLAND_DISPLAY, so you launch an app from within the GNOME Shell session and they appear as freestanding Windows windows.
+The WSLg approach is neater when it works: you get audio, etc. But it is fragile in a number of ways:
 
-GNOME Terminal doesn't launch because it is sad about the supposedly non-UTF-8 locale. Try weston-terminal instead.
+- Sometimes apps are launched with the WSLg $WAYLAND_DISPLAY, not the nested GNOME Shell's $WAYLAND_DISPLAY, so you launch an app from within the GNOME Shell session and they appear as freestanding Windows windows. This is probably because gnome-session or the systemd user instance have the wrong environment and Shell is not updating them. But it is nondeterministic.
+- Sometimes WSLg's `Xwayland` falls over for unknown reasons, and can only be recovered by terminating your container with `wsl -t Bookworm` (which also terminates the WSLg system container) and relaunching.
+- On my system, GNOME Shell interacts poorly with the D3D12 Mesa driver (which passes graphics commands through to the host) when running as a client of the WSLg Xwayland server. The scripts in this repo set `LIBGL_ALWAYS_SOFTWARE=1` to work around this, but this is discarding one of the key advantages of using WSLg!
+
+In either configuration, GNOME Terminal doesn't launch because it is sad about the supposedly non-UTF-8 locale. Try weston-terminal instead.
 
 ## Setup
 
