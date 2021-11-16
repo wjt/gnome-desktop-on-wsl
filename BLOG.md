@@ -2,7 +2,7 @@
 
 The week of 8th–12th November was Endless Orange Week, a program where the entire [Endless OS Foundation](https://www.endlessos.org/) team engaged in projects designed to grow our collective learning related to our skills, work and mission. My project was to explore running a complete GNOME desktop in a window on Windows, via [Windows Subsystem for Linux](https://en.wikipedia.org/wiki/Windows_Subsystem_for_Linux).
 
-SCREENSHOT
+![](./screenshots/rdp-hack.png)
 
 ## Why?!
 
@@ -42,7 +42,7 @@ So another approach is to launch GNOME Shell in its headless mode, and then expl
 
 Not pictured below are the ugly authentication and certificate warning dialogs during the connection flow:
 
-SCREENSHOT
+![](./screenshots/rdp-shadertoy.png)
 
 Here, GNOME Shell is (AFAICT) rendering using Mesa's accelerated D3D12 backend, as are GL applications running on it. But we lose WSLg's PulseAudio forwarding, and its use of shared memory to send the pixel contents of the desktop to the client. Both of these are solvable problems, though. Like WSLg, GNOME Remote Desktop uses the FreeRDP library. GNOME Remote Desktop uses Pipewire rather than PulseAudio, so WSLg's [RDP plugins for PulseAudio](https://github.com/microsoft/pulseaudio-mirror/commit/2f0f0b8c3872780f15e275fc12899f4564f01bd5) and [Weston](https://github.com/microsoft/weston-mirror/blob/working/libweston/backend-rdp/rdpaudio.c) could not be used directly, but audio forwarding over RDP seems a [desirable feature to support](https://gitlab.gnome.org/GNOME/gnome-remote-desktop/-/issues/68) for normal remoting use-cases. Supporting the shared-memory transport for RDP in GNOME Remote Desktop is perhaps a harder sell, but in principle it could be done.
 
