@@ -24,7 +24,7 @@ I [packaged up](https://github.com/wjt/gnome-desktop-on-wsl) my collection of sc
 
 Once you've got enough of the environment GNOME expects running, you can indeed just run it, and it appears with glorious Weston window decorations:
 
-SCREENSHOT
+![](./screenshots/wslg-sidetrack-audio.png)
 
 Apps can even emit sound over PulseAudio as normal, or at least they could once I [fixed an edge case in Flatpak’s handling of the PulseAudio socket](https://github.com/flatpak/flatpak/pull/4564). So on the face of it this seems quite promising! But Shell's nested mode is primarily intended for development, with the window size fixed at launch by an environment variable with `DEBUG` in its name.
 
